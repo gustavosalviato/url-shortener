@@ -1,6 +1,7 @@
 package com.gustavosalviato.urlshortener.user;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import com.gustavosalviato.urlshortener.exception.UserAlreadyExistsException;
 import com.gustavosalviato.urlshortener.user.communication.CreateUserRequest;
 import com.gustavosalviato.urlshortener.user.communication.CreateUserResponse;
 import jakarta.validation.Valid;
@@ -21,7 +22,7 @@ public class UserController {
         var user = this.userRepository.findByEmail(request.email());
 
         if (user != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
+            throw new UserAlreadyExistsException();
         }
 
         var passwordHashed = BCrypt.withDefaults().hashToString(12, request.password().toCharArray());
