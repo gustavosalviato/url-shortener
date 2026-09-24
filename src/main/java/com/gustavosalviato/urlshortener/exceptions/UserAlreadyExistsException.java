@@ -1,4 +1,4 @@
-package com.gustavosalviato.urlshortener.exception;
+package com.gustavosalviato.urlshortener.exceptions;
 
 public class UserAlreadyExistsException extends RuntimeException {
 

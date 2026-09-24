@@ -1,4 +1,4 @@
-package com.gustavosalviato.urlshortener.exception;
+package com.gustavosalviato.urlshortener.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +24,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<Object> handleValidationException(UserAlreadyExistsException exception) {
+
+        Map<String, Object> response = Map.of("message", exception.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<Object> handleValidationException(InvalidCredentialsException exception) {
 
         Map<String, Object> response = Map.of("message", exception.getMessage());
 
