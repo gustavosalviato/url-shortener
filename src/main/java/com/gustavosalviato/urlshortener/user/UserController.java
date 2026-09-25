@@ -2,7 +2,7 @@ package com.gustavosalviato.urlshortener.user;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.gustavosalviato.urlshortener.exceptions.InvalidCredentialsException;
-import com.gustavosalviato.urlshortener.exceptions.JwtService;
+import com.gustavosalviato.urlshortener.security.JwtService;
 import com.gustavosalviato.urlshortener.exceptions.UserAlreadyExistsException;
 import com.gustavosalviato.urlshortener.user.communication.CreateUserRequest;
 import com.gustavosalviato.urlshortener.user.communication.CreateUserResponse;
@@ -12,7 +12,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -62,5 +65,11 @@ public class UserController {
         var accessToken = this.jwtService.generateToken(user);
 
         return ResponseEntity.ok(new LoginResponse(accessToken));
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test(@AuthenticationPrincipal UUID userId) {
+
+        return ResponseEntity.ok().body(userId.toString());
     }
 }
