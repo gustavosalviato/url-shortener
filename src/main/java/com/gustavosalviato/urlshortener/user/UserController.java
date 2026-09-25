@@ -66,10 +66,4 @@ public class UserController {
 
         return ResponseEntity.ok(new LoginResponse(accessToken));
     }
-
-    @GetMapping("/test")
-    public ResponseEntity<String> test(@AuthenticationPrincipal UUID userId) {
-
-        return ResponseEntity.ok().body(userId.toString());
-    }
 }

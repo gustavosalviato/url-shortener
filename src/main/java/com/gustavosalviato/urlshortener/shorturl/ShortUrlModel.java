@@ -14,7 +14,11 @@ public class ShortUrlModel {
     @Id
     @GeneratedValue(generator = "UUID")
     private UUID id;
+
+    @Column(nullable = false)
     private String originalUrl;
+
+    @Column(nullable = false, unique = true)
     private String shortCode;
 
     @ManyToOne
