@@ -37,4 +37,13 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
+
+
+    @ExceptionHandler(ShortUrlNotFoundException.class)
+    public ResponseEntity<Object> handleValidationException(ShortUrlNotFoundException exception) {
+
+        Map<String, Object> response = Map.of("message", exception.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 }
