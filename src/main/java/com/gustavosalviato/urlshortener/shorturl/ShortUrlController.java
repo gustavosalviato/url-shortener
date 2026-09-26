@@ -2,6 +2,7 @@ package com.gustavosalviato.urlshortener.shorturl;
 
 import com.gustavosalviato.urlshortener.shorturl.communication.CreateShortUrlRequest;
 import com.gustavosalviato.urlshortener.shorturl.communication.CreateShortUrlResponse;
+import com.gustavosalviato.urlshortener.shorturl.communication.ShortUrlResponse;
 import com.gustavosalviato.urlshortener.user.IUserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -44,6 +43,21 @@ public class ShortUrlController {
     }
 
 
+    @GetMapping
+    public ResponseEntity<List<ShortUrlResponse>> findAll(@AuthenticationPrincipal UUID userId) {
+
+        var shortUrls = this.shortUrlRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
+
+        var response = shortUrls.stream()
+                .map(shortUrl -> new ShortUrlResponse(
+                        shortUrl.getId(), shortUrl.getOriginalUrl(), shortUrl.getShortCode(), shortUrl.getCreatedAt())
+                ).toList();
+
+
+        return ResponseEntity.ok(response);
+    }
+
+
     private String generateShortCode() {
         String shortCode;
 
@@ -53,7 +67,6 @@ public class ShortUrlController {
         } while (shortUrlRepository.existsByShortCode(shortCode));
 
         return shortCode;
-
     }
 
 }
