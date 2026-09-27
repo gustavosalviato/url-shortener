@@ -1,8 +1,10 @@
 package com.gustavosalviato.urlshortener.shorturl;
 
+import com.gustavosalviato.urlshortener.exceptions.ShortUrlNotFoundException;
 import com.gustavosalviato.urlshortener.shorturl.communication.CreateShortUrlRequest;
 import com.gustavosalviato.urlshortener.shorturl.communication.CreateShortUrlResponse;
 import com.gustavosalviato.urlshortener.shorturl.communication.ShortUrlResponse;
+import com.gustavosalviato.urlshortener.shorturl.communication.UpdateShortUrlRequest;
 import com.gustavosalviato.urlshortener.user.IUserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,15 +50,31 @@ public class ShortUrlController {
 
         var shortUrls = this.shortUrlRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
 
-        var response = shortUrls.stream()
-                .map(shortUrl -> new ShortUrlResponse(
-                        shortUrl.getId(), shortUrl.getOriginalUrl(), shortUrl.getShortCode(), shortUrl.getCreatedAt())
-                ).toList();
-
+        var response = shortUrls.stream().map(ShortUrlResponse::from).toList();
 
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ShortUrlResponse> findById(@PathVariable UUID id, @AuthenticationPrincipal UUID userId) {
+        var shortUrl = this.shortUrlRepository.findByIdAndUserId(id, userId).orElseThrow(ShortUrlNotFoundException::new);
+
+
+        return ResponseEntity.ok(ShortUrlResponse.from(shortUrl));
+    }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable UUID id, @Valid @RequestBody UpdateShortUrlRequest request, @AuthenticationPrincipal UUID userId) {
+        var shortUrl = this.shortUrlRepository.findByIdAndUserId(id, userId).orElseThrow(ShortUrlNotFoundException::new);
+
+        shortUrl.setOriginalUrl(request.originalUrl());
+
+        this.shortUrlRepository.save(shortUrl);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
+    }
 
     private String generateShortCode() {
         String shortCode;

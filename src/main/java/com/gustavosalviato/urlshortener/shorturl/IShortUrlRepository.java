@@ -10,5 +10,6 @@ public interface IShortUrlRepository extends JpaRepository<ShortUrlModel, UUID> 
     boolean existsByShortCode(String shortCode);
     Optional<ShortUrlModel> findByShortCode(String shortCode);
     List<ShortUrlModel> findAllByUserIdOrderByCreatedAtDesc(UUID userId);
+    Optional<ShortUrlModel> findByIdAndUserId(UUID id, UUID userId);
 }
 
