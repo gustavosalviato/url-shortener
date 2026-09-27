@@ -76,6 +76,16 @@ public class ShortUrlController {
 
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> delete(@PathVariable UUID id, @AuthenticationPrincipal UUID userId) {
+        var shortUrl = this.shortUrlRepository.findByIdAndUserId(id, userId).orElseThrow(ShortUrlNotFoundException::new);
+
+        this.shortUrlRepository.delete(shortUrl);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
+    }
+
     private String generateShortCode() {
         String shortCode;
 
