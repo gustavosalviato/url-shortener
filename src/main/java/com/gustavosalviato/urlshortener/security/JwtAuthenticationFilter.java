@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             var token = authorization.substring(7);
 
             try {
-                var decodedToken = jwtService.validateToken(token);
+                var decodedToken = jwtService.validateAccessToken(token);
 
                 var userId = UUID.fromString(decodedToken.getSubject());
 

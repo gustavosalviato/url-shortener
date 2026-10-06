@@ -1,4 +1,4 @@
 package com.gustavosalviato.urlshortener.user.communication;
 
-public record LoginResponse(String accessToken) {
+public record LoginResponse(String accessToken, String refreshToken) {
 }

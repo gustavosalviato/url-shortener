@@ -25,7 +25,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/users/",
-                                "/users/login"
+                                "/users/login",
+                                "/users/refresh"
                         ).permitAll()
 
                         .requestMatchers(

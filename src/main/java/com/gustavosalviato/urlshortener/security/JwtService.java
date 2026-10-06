@@ -21,16 +21,35 @@ public class JwtService {
                 .withClaim("type", "access")
                 .withIssuedAt(Instant.now())
                 .withExpiresAt(
-                        Instant.now().plus(180, ChronoUnit.MINUTES)
+                        Instant.now().plus(20, ChronoUnit.MINUTES)
                 )
                 .sign(algorithm);
     }
 
+    public String generateRefreshToken(UserModel user) {
+        return JWT.create()
+                .withIssuer("url-shortener")
+                .withSubject(user.getId().toString())
+                .withClaim("type", "refresh")
+                .withIssuedAt(Instant.now())
+                .withExpiresAt(
+                        Instant.now().plus(7, ChronoUnit.DAYS)
+                )
+                .sign(algorithm);
+    }
 
-    public DecodedJWT validateToken(String token) {
+    public DecodedJWT validateAccessToken(String token) {
         return JWT.require(algorithm)
                 .withIssuer("url-shortener")
                 .withClaim("type", "access")
+                .build()
+                .verify(token);
+    }
+
+    public DecodedJWT validateRefreshToken(String token) {
+        return JWT.require(algorithm)
+                .withIssuer("url-shortener")
+                .withClaim("type", "refresh")
                 .build()
                 .verify(token);
     }
